@@ -105,7 +105,7 @@ function MoviesListBox({ children }) {
   return (
     <div className="box">
       <ToggleButton isOpen={isOpen} onClick={handleToggleClick} />
-      {isOpen && children }
+      {isOpen && children}
     </div>
   );
 }
@@ -212,29 +212,6 @@ function WatchedMovie({ movie }) {
   );
 }
 
-//Stateful component
-function MoviesWatchedBox() {
-  const [watched, setWatched] = useState(tempWatchedData);
-
-  const [isOpen, setIsOpen] = useState(true);
-
-  function handleToggleClick() {
-    setIsOpen((open) => !open);
-  }
-
-  return (
-    <div className="box">
-      <ToggleButton isOpen={isOpen} onClick={handleToggleClick} />
-      {isOpen && (
-        <>
-          <WatchedSummary watched={watched} />
-          <WatchedMoviesList watched={watched} />
-        </>
-      )}
-    </div>
-  );
-}
-
 // Structural Component
 function Main({ children }) {
   return <main className="main">{children}</main>;
@@ -243,6 +220,7 @@ function Main({ children }) {
 //Structural Component
 export default function App() {
   const [movies, setMovies] = useState(tempMovieData);
+  const [watched, setWatched] = useState(tempWatchedData);
 
   return (
     <>
@@ -254,7 +232,10 @@ export default function App() {
         <MoviesListBox>
           <MovieList movies={movies} />
         </MoviesListBox>
-        <MoviesWatchedBox />
+        <MoviesListBox>
+          <WatchedSummary watched={watched} />
+          <WatchedMoviesList watched={watched} />
+        </MoviesListBox>
       </Main>
     </>
   );
