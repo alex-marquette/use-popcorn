@@ -1,6 +1,6 @@
-#Use-Popcorn
+# Use-Popcorn
 
-##Description
+## Description
 This was a simple react project built within the Udemy Course "The Ultimate React Course 2024: React, Next.js, Redux & More" by Jonas Schmedtmann
 Course Link: https://www.udemy.com/course/the-ultimate-react-course/learn/lecture/37350750#overview. 
 
