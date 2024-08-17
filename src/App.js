@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const tempMovieData = [
   {
@@ -49,6 +49,81 @@ const tempWatchedData = [
 
 const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
+
+const KEY = "b6f3ec0e";
+
+//Structural Component
+export default function App() {
+  const [movies, setMovies] = useState([]);
+  const [watched, setWatched] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const query = "asdfsdfas";
+
+  useEffect(function () {
+    async function fetchMovies() {
+      try {
+        setIsLoading(true);
+        const res = await fetch(
+          `https://www.omdbapi.com/?apikey=${KEY}&s=${query}`
+        );
+
+        if (!res.ok) {
+          throw new Error("Something went wrong with fetching movies");
+        }
+
+        const data = await res.json();
+
+        if (data.Response === "False") {
+          throw new Error("Movie not found");
+        }
+
+        setMovies(data.Search);
+      } catch (error) {
+        console.error(error.message);
+        setError(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchMovies();
+  }, []);
+
+  return (
+    <>
+      <NavBar>
+        <Search />
+        <NumResults movies={movies} />
+      </NavBar>
+      <Main>
+        <MoviesListBox>
+          {/* Conditionally render the loading state based on what is true */}
+          {isLoading && <Loader />}
+          {isLoading && !error && <MovieList movies={movies} />}
+          {error && <ErrorMessage message={error} />}
+        </MoviesListBox>
+        <MoviesListBox>
+          <WatchedSummary watched={watched} />
+          <WatchedMoviesList watched={watched} />
+        </MoviesListBox>
+      </Main>
+    </>
+  );
+}
+
+function Loader() {
+  return <p className="loader">Loading...</p>;
+}
+
+function ErrorMessage({ message }) {
+  return (
+    <p className="error">
+      <span>⛔</span> {message}
+    </p>
+  );
+}
 
 //Structural Component
 function NavBar({ children }) {
@@ -215,28 +290,4 @@ function WatchedMovie({ movie }) {
 // Structural Component
 function Main({ children }) {
   return <main className="main">{children}</main>;
-}
-
-//Structural Component
-export default function App() {
-  const [movies, setMovies] = useState(tempMovieData);
-  const [watched, setWatched] = useState(tempWatchedData);
-
-  return (
-    <>
-      <NavBar>
-        <Search />
-        <NumResults movies={movies} />
-      </NavBar>
-      <Main>
-        <MoviesListBox>
-          <MovieList movies={movies} />
-        </MoviesListBox>
-        <MoviesListBox>
-          <WatchedSummary watched={watched} />
-          <WatchedMoviesList watched={watched} />
-        </MoviesListBox>
-      </Main>
-    </>
-  );
 }
